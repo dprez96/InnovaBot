@@ -1,0 +1,487 @@
+const { createBot, createProvider, createFlow, addKeyword, EVENTS } = require('@bot-whatsapp/bot')
+
+const QRPortalWeb = require('@bot-whatsapp/portal')
+const BaileysProvider = require('@bot-whatsapp/provider/baileys')
+const MockAdapter = require('@bot-whatsapp/database/mock')
+const { delay } = require('@whiskeysockets/baileys')
+
+
+
+const flowSecundario = addKeyword(['gracias', 'ok','vale','0']).addAnswer(['Gracias por contactar con DAEBOT! \n \nEste Bot llega a ustedes gracias al *Club InnovaBot* de Inacap Sede La Granja \n \nPara mas informacion sobre nosotros visita nuestro Instagram \n@clubinnovabot_inacaplagranja'])
+
+const flowVolver = addKeyword('#').addAnswer(
+    [
+    'volvemos al menú principal'
+],
+{ capture: true, idle: 1 }, 
+async (ctx, { gotoFlow, inRef }) => {
+    if (ctx?.idleFallBack) {
+        return gotoFlow(flowPrincipal)
+    }
+}
+)
+
+
+const flowDeportivo = addKeyword(['1', 'deportivo', 'taller deportivo']).addAnswer(
+    [
+        'Los talleres actualmente disponible son: \n',
+        'Taller Futbolito   Lunes y Viernes de 16:00 a 18:00   CANCHA SEDE CUARTO PISO',
+        'Taller Tenis de Mesa   Miércoles y Viernes de 16:00 a 18:00   HALL CENTRAL SEDE',
+        'Taller Basquetbol   Martes de 13:00 a 15:00 y Jueves 17:00 a 19:00 CANCHA SEDE CUARTO PISO \n',
+        'Espero haber sido de ayuda en esta ocasión, muchas gracias por confiar en Bienestar INACAP',
+        '',
+        '*#* para volver al menú principal' 
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+    
+        },[flowSecundario,flowVolver]
+)
+const flowCultural = addKeyword(['2', 'cultural', 'taller cultural']).addAnswer(
+    [
+        'Los talleres actualmente disponible son: \n',
+        'Taller Salsa / Bachata   Martes y Jueves de 16:00 a 18:00   SALA TALLERES DAE',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+const flowAutocuidado = addKeyword(['3', 'autocuidado', 'taller autocuidado']).addAnswer(
+    [
+        'Los talleres actualmente disponible son: \n',
+        'Taller "Poder de las conversaciones"   Lunes de 14:00 a 16:00   SALA POR DEFINIR',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowExtracurriculares = addKeyword(['1', 'talleres', 'extracurriculares','talleres extracurriculares']).addAnswer(
+    [
+        '*Seleccionaste Talleres Extracurriculares*',
+        'Gracias por acudir con DAE BOT en este momento, INACAP cuenta con variados talleres de diversos tipos a los que puedes inscribirte\n',
+        'Para acceder a los talleres de INACAP debes seguir los siguientes pasos',
+        '- Desde el portal web ingresa a *Asuntos Estudiantiles* --> *Inscripción de Actividades Extracurriculares* \nAqui selecciona el taller de su preferencia y da click en *Inscripción* \n',
+        '- Desde su App Inacap vaya a la pestaña de *DAE*, seleccione *Actividades Extracurriculares* \nAqui selecciona el taller de su preferencia y da click en *Inscripción*\n',
+        
+        'Seleccione el tipo de taller que es de su interés',
+        '👉 *1* Talleres Deportivos',
+        '👉 *2* Talleres Culturales',
+        '👉 *3* Talleres Autocuidado',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flujoFinal)
+            }
+        },
+    [flowDeportivo,flowCultural,flowAutocuidado,flowVolver]
+)
+
+
+
+const flowAccidentes = addKeyword(['1', 'accidentes', 'seguro de accidentes']).addAnswer(
+    [
+        'Como alumno de INACAP cuentas con un seguro de accidentes que te asegura todos los días del año.',
+        'Gracias a este importante beneficio de INACAP, dispones con una cobertura de 70 UF para gastos médicos por accidente y 20 UF por muerte accidental.',
+        'El seguro ofrecido proporciona atención las 24 horas en cualquier clínica de nuestra red, con la posibilidad de llamar al número *228 2033 03* o elegir la atención de Libre Elección.', 
+        'Es relevante tener en cuenta que el seguro cubre todas las atenciones médicas necesarias hasta 180 días después del accidente, incluyendo controles, tratamientos posteriores y medicamentos recetados.', 
+        'Se destaca que este seguro de accidentes personales y el seguro estatal son mutuamente excluyentes y se activan desde la primera atención de urgencia.', 
+        'Para obtener información adicional sobre el seguro de accidentes, haz clic en el enlace de aqui abajo 👇',
+        '',
+        'https://www.inacap.cl/web/2018/sites/seguro-accidentes-inacap/index.html',
+        '',
+        'Si quedaste con alguna duda, dirigete a las oficinas de DAE y con mucho gusto te responderemos tus dudas 😊',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+const flowPsicologo = addKeyword(['2', 'psicologo']).addAnswer(
+    [
+        'Para acceder a la atencion psicologica de INACAP debes seguir los siguientes pasos\n',
+        '- Ingresa al siguiente link',
+        'https://psicologia.geasa.cl/inacap/login',
+        '- Si no posees una cuenta selecciona la opcion de "¿Aún no tienes acceso?"',
+        '- Sigue las instrucciones de la pagina y podrás iniciar sesion con tu RUT \n',
+        'Espero haber sido de ayuda en esta ocasión, muchas gracias por confiar en DAE BOT',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowSeguro = addKeyword(['2', 'seguro', 'seguro de accidentes','accidente','accidentes']).addAnswer(
+    [
+        'Seleccionaste seguro de accidentes Inacap',
+        'Gracias por acudir con DAE BOT en este momento, INACAP cuenta con Seguro de accidentes y atencion psicologica en caso de necesitarlo\n',
+        'Seleccione una opción:',
+        '👉 *1* Seguro de Accidentes',
+        '👉 *2* Atención Psicologica',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flujoFinal)
+            }
+        },
+    [flowAccidentes,flowPsicologo,flowVolver]
+)
+
+
+
+const flowFormulario = addKeyword(['1', 'formulario', 'practica','practicas','formulario de practicas']).addAnswer(
+    [
+        'Contamos con un formulario que puedes llenar para acceder a tus practicas profesionales: ',
+        'https://docs.google.com/forms/d/1iYN6its49RNVk1waV6RbGzNiZM5pth28UlmOHDN0EuU/prefill?pli=1',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+const flowBolsa = addKeyword(['2', 'bolsa', 'trabajo','bolsa de trabajo','bolsa de trabajo inacap']).addAnswer(
+    [
+        'En INACAP facilitamos tu entrada al mundo laboral, por eso contamos con una bolsa de trabajo para ayudarte: ',
+        'https://laboral.inacap.cl/ingresar',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowPracticas = addKeyword(['3', 'practicas',]).addAnswer(
+    [
+        '*Seleccionaste practicas*',
+        'En Inacap te ayudamos en tu busqueda de trabajo o practica laboral',
+        'Selecciona una opción:',
+        '👉 *1* Formulario de practicas',
+        '👉 *2* Bolsa de trabajo Inacap',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flujoFinal)
+            }
+        },
+    [flowFormulario,flowBolsa,flowVolver]
+)
+
+const flowResultado = addKeyword(['1', 'resultados','socioeconomico']).addAnswer(
+    [
+    'Has optado por revisar los resultados socioeconómicos.' ,
+    'Estamos comprometidos en brindarte la información que buscas. Accede a tus resultados fácilmente haciendo clic en el link de aca abajo.',
+    '',
+    '👉     https://resultados.beneficiosestudiantiles.cl/login     ',
+    '',
+    '¡Espero de haber sido de mucha ayuda y mucha suerte!',
+    '',
+    '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowGratuidad = addKeyword(['2','Gratuidad']).addAnswer(
+    [
+        'He notado que quieres saber sobre gratuidad, dejame contarte un poco sobre este beneficio, en donde, Inacap se encuentra adscrito a *Gratuidad*.'
+    ]
+).addAnswer(
+    [
+        'La gratuidad en la educación superior en Chile cubre a familias con el 60% de menores ingresos, eximiendo del pago de arancel y matrícula a estudiantes en instituciones adscritas.', 
+        'La clasificación socioeconómica se determina mediante el Formulario Único de Acreditación Socioeconómica (FUAS).',
+        'Los estudiantes que pertenezcan al 60% de menores ingresos, no deben tener título previo y cumplir con otros requisitos.',
+        'Los cuales aparecen en el siguiente link',
+        '',
+        '👉 https://portal.beneficiosestudiantiles.cl/gratuidad '
+        ,
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowCae = addKeyword(['3','cae']).addAnswer(
+    [
+        'Haz seleccionado la opcion del beneficio del *Crédito con Aval del Estado (CAE)*'
+    ]
+).addAnswer(
+    [
+        'Es un beneficio del Estado que se otorga a estudiantes de probado mérito académico que necesitan apoyo financiero para iniciar o continuar una carrera de pregrado en una institución acreditada y participante del Sistema de Crédito con Garantía Estatal.',
+        'El Crédito con Aval del Estado (CAE) en Chile no tiene un nivel preestablecido de ingresos familiares para su obtención.', 
+        'Cada año, la asignación del beneficio depende de la disponibilidad de recursos presupuestarios y de las vacantes en las instituciones de educación superior para beneficiarios del CAE.', 
+        '*Desde el 2014*, se ha otorgado el Crédito CAE *sin restricciones socioeconómicas*, permitiendo un acceso más amplio a estudiantes sin considerar su situación económica.'
+    ]
+).addAnswer(
+    [
+        'Si necesita mas informacion haz clic en los enlaces de aqui abajo 👇',
+        '',
+        '*Preguntas Frecuentes* 👇',
+        'https://portal.ingresa.cl/preguntas-frecuentes/',
+        '',
+        '*Cómo Postular* 👇',
+        'https://portal.ingresa.cl/como-postular/',
+        '',
+        '*MÁS INFORMACIÓN* 👇',
+        'https://portal.ingresa.cl/',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowBenEstudiantil = addKeyword(['4', 'beneficio', 'beneficios', 'beneficios estudiantil']).addAnswer(
+    [
+        'Los Beneficios Estudiantiles del Estado ofrecen apoyo financiero para la Educación Superior a través de tres tipos de ayudas:\n',
+
+        'Gratuidad: Disponible para estudiantes cuyas familias se encuentran dentro del 60% de menores ingresos del país. Cubre el arancel y la matrícula durante toda la duración nominal de la carrera en instituciones adscritas a este beneficio.\n',
+        
+       'Créditos: Son préstamos que ayudan a cubrir parte del costo de la carrera y pueden complementar a las becas. Se otorgan con recursos estatales (Fondo Solidario Crédito Universitario) o con la garantía del Estado (CAE).\n',
+        
+        'Becas: Otorgadas por el Ministerio de Educación, cubren parte del arancel anual de la carrera y, en algunos casos, la matrícula. Los recursos se entregan directamente a las instituciones y no requieren devolución al egreso o titulación.'
+    ]
+).addAnswer(
+    [
+        '*Para revisar los beneficios haz clic en el enlace de acá abajo  👇*',
+        'https://fuas.cl/#beneficios'
+    ]
+).addAnswer(
+    [
+        '*Preguntas Frecuentes 👇*',
+        'https://portal.beneficiosestudiantiles.cl/preguntas-frecuentes',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowSTEM = addKeyword(['1', 'stem']).addAnswer(
+    [
+        'La *Beca STEM* ofrece un beneficio significativo con un descuento del 50% en las colegiaturas para las alumnas nuevas que se matriculen en el Primer Semestre (Otoño) 2024 en el Centro de Formación Técnica INACAP, siempre y cuando cursen carreras STEM.', 
+        'Al obtener esta beca, la estudiante asumirá el costo total de la matrícula semestral y la parte de la colegiatura no cubierta por la beca.', 
+        'Cabe destacar que la asignación de este beneficio es automática una vez que te matricules en el CFT INACAP, sujeta a la previa validación del cumplimiento de los requisitos establecidos.', 
+        'Esta beca, dirigida exclusivamente a mujeres, se considera renovable y se mantendrá durante toda la duración formal de la carrera en la cual te matriculaste.', 
+        'La renovación se realizará automáticamente al matricularte en cada semestre, permitiéndote hacer uso de este valioso beneficio de manera continua.'
+    ]
+).addAnswer(
+    [
+        'Para más información, haz clic en el enlace 👇',
+        '',
+        'https://portales.inacap.cl/financiamiento-estudiantil/becas/becas-inacap/beca-stem/index',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowBecaApoyo = addKeyword(['2', 'apoyo']).addAnswer(
+    [
+        'INACAP ha lanzado la Beca Apoyo INACAP como parte de sus iniciativas de respaldo a los estudiantes del Instituto Profesional y el Centro de Formación Técnica.', 
+        'Este beneficio consiste en un aporte mensual de $40,000 destinado a cubrir diversos gastos relacionados con los estudios, como materiales, transporte y alimentación, durante el semestre académico.', 
+        'La beca tiene una duración semestral y se renueva automáticamente para aquellos estudiantes que cumplen con los requisitos de postulación.',
+        'Los criterios incluyen ser beneficiario de Gratuidad, pertenecer a los primeros cuatro deciles socioeconómicos, tener un promedio de notas superior a 5.5, y no contar con sanciones disciplinarias.', 
+        'La postulación se realiza a través de un formulario específico, y la asignación se basa en la disponibilidad de recursos, priorizando a los estudiantes con mejores rendimientos académicos.', 
+        'El pago mensual se realiza directamente en la cuenta bancaria del estudiante, notificándose la adjudicación o no del beneficio mediante correo electrónico institucional.',
+    ]   // FALTA INFORMACION QUE ACTUALIZAR!
+).addAnswer(
+    [
+        'Para más información, haz clic en el enlace 👇',
+        '',
+        'https://portales.inacap.cl/financiamiento-estudiantil/becas/becas-inacap/beca-apoyo-inacap/index',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+
+const flowBenInacap = addKeyword(['5','becas','inacap']).addAnswer(
+    [
+        'Haz seleccionado la opcion de *BECAS Y BENEFICIOS INACAP*'
+    ]
+).addAnswer(
+    [
+        'En Inacap contamos con 3 Becas para nuestros estudiantes.',
+        'Selecciona una opcion para brindarte la informacion necesaria',
+        '👉 *1* Beca STEM',
+        '👉 *2* Becas de Apoyo Inacap',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flujoFinal)
+            }
+        },
+    [flowSecundario, flowSTEM, flowBecaApoyo,flowVolver]
+)
+
+const flowPortal = addKeyword(['6', 'portal','pago']).addAnswer(
+    [
+        'Realiza el pago de tus compromisos de formá rápida, cómoda y desde cualquier lugar 😁',
+        '👉   https://pagos.inacap.cl/inacap.portalpagos/home.aspx   👈',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+)
+
+const flowBeneficios = addKeyword(['4', 'recreativo', 'bienestar recreativo']).addAnswer(
+    [
+        '*Seleccionaste becas y beneficios*',
+        'En Inacap nos importas y queremos lo mejor para ti.',
+        'Selecciona una opcion:',
+        '👉 *1* Resultados Nivel Socioeconomico',
+        '👉 *2* Gratuidad',
+        '👉 *3* CAE / Solicitud CAE',
+        '👉 *4* Beneficios estudiantiles del estado',
+        '👉 *5* Becas y beneficios INACAP',
+        '👉 *6* Portal de Pagos',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow}) => {
+            
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flujoFinal)}
+        },
+    [flowResultado,flowGratuidad, flowCae, flowBenEstudiantil,flowBenInacap, flowPortal,flowVolver]
+)
+
+
+
+const flowCancha = addKeyword(['5','cancha']).addAnswer(
+    [
+        'Haz seleccionado la opcion de reserva la cancha de Inacap Sede La Granja 😊',
+        'En el siguiente enlace puedes hacer tu reserva',
+        '',
+        'https://daelagranja.setmore.com/bookappointment',
+        '',
+        '*Es obligatorio indicar Nombre, Teléfono, Carrera y Rut.*',
+        '',
+        '*#* para volver al menú principal'
+    ],
+    { capture: true, idle: 15000 }, 
+        async (ctx, { gotoFlow, inRef }) => {
+            if (ctx?.idleFallBack) {
+                return gotoFlow(flowSecundario)
+            }
+        },[flowSecundario,flowVolver]
+
+)
+const flujoFinal = addKeyword(EVENTS.ACTION).addAnswer('No se recibio ninguna respuesta').addAnswer('Gracias por contactar con DAEBOT! \n \nEste Bot llega a ustedes gracias al *Club InnovaBot* de Inacap Sede La Granja \n \nPara mas informacion sobre nosotros visita nuestro Instagram \n@clubinnovabot_inacaplagranja')
+
+
+
+
+const flowPrincipal = addKeyword(['hola', 'buenas', 'alo','oli','que tal','ola','wena','wenas','hi','hello','h'])
+    .addAnswer('Hola 👋🏻 soy DAE Bot de asistencia digital 👾 Estoy para asesorarte y resolver tus dudas las 24 hrs.')
+    .addAnswer(
+        [
+            'Por favor indicame en que puedo ayudarte: ',
+            '👉 *1* Talleres Extracurriculares',
+            '👉 *2* Seguro de accidentes Inacap',
+            '👉 *3* Practicas',
+            '👉 *4* Becas y beneficios',
+            '👉 *5* Reserva tu Cancha',
+            '',
+            '*0* para salir'
+        ],
+        null,null,
+        [flowExtracurriculares, flowSeguro, flowPracticas, flowBeneficios, flowCancha,flowVolver,flowSecundario]
+    )
+
+
+
+const main = async () => {
+    const adapterDB = new MockAdapter()
+    const adapterFlow = createFlow([flowPrincipal])
+    const adapterProvider = createProvider(BaileysProvider)
+
+    createBot({
+        flow: adapterFlow,
+        provider: adapterProvider,
+        database: adapterDB,
+    })
+
+    QRPortalWeb()
+}
+
+
+
+
+main()
